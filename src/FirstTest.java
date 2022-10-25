@@ -5,6 +5,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -72,8 +73,20 @@ public class FirstTest {
         waitForElementAndClick(By.xpath("//*[contains(@text,'SKIP')]"),"no Skip button",5);
         waitForElementPresent(By.id("org.wikipedia:id/search_container"),"element by id not found",5);
         assertElementHasText(By.xpath("//*[@resource-id='org.wikipedia:id/search_container']/android.widget.TextView"),"text is not equal","Search Wikipedia");
-
     }
+
+    //Ex3: Тест: отмена поиска
+    @Test
+    public void testSearchCancel() {
+        waitForElementAndClick(By.xpath("//*[contains(@text,'SKIP')]"),"no Skip button",5);
+        waitForElementAndClick(By.id("org.wikipedia:id/search_container"),"element by id not found",5);
+        waitForElementAndSendKeys(By.xpath("//*[contains(@text,'Search Wikipedia')]"),"Java","can not find input",15);
+
+        assertNumberOfElementsNotZero(By.id("org.wikipedia:id/page_list_item_title"),"not elements are found");
+        waitForElementAndClear(By.id("org.wikipedia:id/search_container"),"can not find input",15);
+        waitForElementNotPresent(By.id("org.wikipedia:id/page_list_item_title"), "titles are present",5);
+    }
+
 
     private WebElement waitForElementPresent(By by, String error_message, long timeOutInSeconds) {
         WebDriverWait wait = new WebDriverWait(driver, timeOutInSeconds);
@@ -115,6 +128,13 @@ public class FirstTest {
     private void assertElementHasText(By by, String error_message, String expectedText){
        String actualText = waitForElementPresent(by, error_message).getAttribute("text");
        Assert.assertEquals(error_message, expectedText, actualText);
+    }
+
+    private void assertNumberOfElementsNotZero(By by, String error_message){
+        WebDriverWait wait = new WebDriverWait(driver, 15);
+        wait.withMessage(error_message + "\n");
+        Integer numberOfElements = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(by)).size();
+        Assert.assertTrue(error_message, numberOfElements>0);
     }
 
 }
