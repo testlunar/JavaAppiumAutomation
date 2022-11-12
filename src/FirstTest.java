@@ -258,6 +258,18 @@ public class FirstTest {
 
     }
 
+    @Test
+    public void checkTitleIsPresent() {
+        waitForElementAndClick(By.xpath("//*[contains(@text,'SKIP')]"), "no Skip button", 5);
+        waitForElementAndClick(By.id("org.wikipedia:id/search_container"), "element by id not found", 5);
+        waitForElementAndSendKeys(By.xpath("//*[contains(@text,'Search Wikipedia')]"), "Java", "can not find input", 15);
+        waitForElementAndClick(By.xpath("//*[contains(@text,'Object-oriented programming language')]"), "element by text not found", 5);
+        waitForElementPresent(
+                By.xpath("//android.widget.TextView[@text = 'Object-oriented programming language']/..//android.widget.TextView[1]"),
+                "element by text not found", 15);
+        assertElementPresent(By.xpath("//*[@resource-id='pcs-edit-section-title-description']/../android.widget.TextView[1]"),
+                "text","No title is found");
+    }
 
     private WebElement waitForElementPresent(By by, String error_message, long timeOutInSeconds) {
         WebDriverWait wait = new WebDriverWait(driver, timeOutInSeconds);
@@ -378,5 +390,10 @@ public class FirstTest {
     private String waitForElementAndGetAttribute(By by, String attribute, String errorMessage, long timeOutInSeconds) {
         WebElement element = waitForElementPresent(by, errorMessage, timeOutInSeconds);
         return element.getAttribute(attribute);
+    }
+
+    private void assertElementPresent(By by, String attribute, String errorMessage){
+        WebElement element = waitForElementPresent(by, errorMessage, 0);
+        Assert.assertNotNull("No title is found",element.getAttribute(attribute));
     }
 }
