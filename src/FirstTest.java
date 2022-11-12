@@ -14,10 +14,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 public class FirstTest {
     private AppiumDriver driver;
@@ -170,14 +168,14 @@ public class FirstTest {
         waitForElementAndSendKeys(By.xpath("//*[contains(@text,'Search Wikipedia')]"), searchLine, "can not find input", 15);
         waitForElementAndClick(By.xpath("//*[contains(@text,'Object-oriented programming language')]"),
                 "element by text " + searchLine + " not found", 20);
-        String title_before_rotation = waitForElementAnfGetAttribute(
+        String title_before_rotation = waitForElementAndGetAttribute(
                 By.xpath("//*[@resource-id='pcs-edit-section-title-description']/../android.widget.TextView[1]"),
                 "text",
                 "did not find title of element before rotation",
                 15
         );
         driver.rotate(ScreenOrientation.LANDSCAPE);
-        String title_after_rotation = waitForElementAnfGetAttribute(
+        String title_after_rotation = waitForElementAndGetAttribute(
                 By.xpath("//*[@resource-id='pcs-edit-section-title-description']/../android.widget.TextView[1]"),
                 "text",
                 "did not find title of element after rotation",
@@ -186,7 +184,7 @@ public class FirstTest {
         Assert.assertEquals(
                 "title is different after rotation", title_before_rotation, title_after_rotation);
         driver.rotate(ScreenOrientation.PORTRAIT);
-        String title_after2rotation = waitForElementAnfGetAttribute(
+        String title_after2rotation = waitForElementAndGetAttribute(
                 By.xpath("//*[@resource-id='pcs-edit-section-title-description']/../android.widget.TextView[1]"),
                 "text",
                 "did not find title of element after rotation",
@@ -204,6 +202,59 @@ public class FirstTest {
         waitForElementPresent(By.xpath("//*[contains(@text,'Object-oriented programming language')]"), "element by text not found", 5);
         driver.runAppInBackground(2);
         waitForElementPresent(By.xpath("//*[contains(@text,'Object-oriented programming language')]"), "element by text not found after background", 5);
+
+    }
+
+    @Test
+    public void saveTwoArticleToMyList() {
+        waitForElementAndClick(By.xpath("//*[contains(@text,'SKIP')]"), "no Skip button", 5);
+        waitForElementAndClick(By.id("org.wikipedia:id/search_container"), "element by id not found", 5);
+        waitForElementAndSendKeys(By.xpath("//*[contains(@text,'Search Wikipedia')]"), "Java", "can not find input", 15);
+        waitForElementAndClick(By.xpath("//*[contains(@text,'Object-oriented programming language')]"), "element by text not found", 5);
+        waitForElementPresent(
+                By.xpath("//android.widget.TextView[@text = 'Object-oriented programming language']/..//android.widget.TextView[1]"),
+                "element by text not found", 15);
+        //добавление 1 статьи
+        waitForElementAndClick(By.id("org.wikipedia:id/page_save"), "No Save button", 5);
+        waitForElementAndClick(By.id("org.wikipedia:id/snackbar_action"), "no add to list button", 5);
+        String listName = "Programming";
+        waitForElementAndSendKeys(By.xpath("//*[contains(@text,'Name of this list')]"), listName, "can not find input for name of list", 15);
+        waitForElementAndClick(By.xpath("//*[contains(@text,'OK')]"), "no OK button", 5);
+
+        //добавление 2й статьи
+        waitForElementAndClick(By.xpath("//*[contains(@text,'Search Wikipedia')]"), "element not found", 20);
+        waitForElementAndSendKeys(By.xpath("//*[contains(@text,'Search Wikipedia')]"), "Python", "can not find input", 20);
+        waitForElementAndClick(By.xpath("//*[contains(@text,'General-purpose programming language')]"), "element by text not found", 5);
+        waitForElementPresent(
+                By.xpath("//android.widget.TextView[@text = 'General-purpose programming language']/..//android.widget.TextView[1]"),
+                "element by text not found", 15);
+        waitForElementAndClick(By.id("org.wikipedia:id/page_save"), "No Save button", 10);
+        waitForElementAndClick(By.id("org.wikipedia:id/snackbar_action"), "no add to list button", 15);
+
+        //Добавление в уже существующий лист
+        waitForElementAndClick(By.xpath("//*[contains(@text,'" + listName + "')]"), "no saved list with name " + listName, 5);
+
+        //Открытие сохраненного листа
+        waitForElementAndClick(By.id("org.wikipedia:id/snackbar_action"), "no VIEW the list button", 15);
+        waitForElementPresent(By.id("org.wikipedia:id/item_title"), "element title not found", 20);
+        //удаление статьи и проверка
+        swipeElementToLeft(By.xpath("//*[contains(@text,'Java (programming language)')]"), "can not swipe left", 5);
+        waitForElementNotPresent(By.xpath("//*[contains(@text,'Java (programming language)')]"), "element in MyList is present and was not deleted", 10);
+        String title_in_list = waitForElementAndGetAttribute(
+                By.id("org.wikipedia:id/page_list_item_title"),
+                "text",
+                "did not find title ",
+                15
+        );
+        waitForElementAndClick(By.id("org.wikipedia:id/page_list_item_title"),"cant click on title",5);
+        String title_whenOpen = waitForElementAndGetAttribute(
+                By.xpath("//*[@resource-id='pcs-edit-section-title-description']/../android.widget.TextView[1]"),
+                "text",
+                "did not find title of element after rotation",
+                15
+        );
+        Assert.assertEquals(
+                "title is different after 2rotation", title_in_list, title_whenOpen);
 
     }
 
@@ -324,7 +375,7 @@ public class FirstTest {
         }
     }
 
-    private String waitForElementAnfGetAttribute(By by, String attribute, String errorMessage, long timeOutInSeconds) {
+    private String waitForElementAndGetAttribute(By by, String attribute, String errorMessage, long timeOutInSeconds) {
         WebElement element = waitForElementPresent(by, errorMessage, timeOutInSeconds);
         return element.getAttribute(attribute);
     }
