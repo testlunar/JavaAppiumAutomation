@@ -38,6 +38,7 @@ public class FirstTest {
 
     @After
     public void tearDown() {
+        driver.rotate(ScreenOrientation.PORTRAIT);
         driver.quit();
     }
 
@@ -396,4 +397,5 @@ public class FirstTest {
         WebElement element = waitForElementPresent(by, errorMessage, 0);
         Assert.assertNotNull("No title is found",element.getAttribute(attribute));
     }
+
 }
