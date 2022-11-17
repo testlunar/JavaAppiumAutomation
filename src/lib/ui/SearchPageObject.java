@@ -9,6 +9,7 @@ public class SearchPageObject extends MainPageObject {
             SEARCH_CONTAINER = "org.wikipedia:id/search_container",
             CANCEL_BUTTON = "org.wikipedia:id/search_close_btn",
             SEARCH_RESULT_BY_SUBSTRING_TPL = "//*[contains(@text,'{SUBSTRING}')]",
+            SEARCH_RESULT_BY_TITLE_DESCRIPTION = "//*[@resource-id='org.wikipedia:id/page_list_item_title'][@text='{TITLE}']/..//*[@text='{DESCRIPTION}']",
             SEARCH_RESULT_LOCATOR = "org.wikipedia:id/search_results_list",
             PAGE_LIST_ITEM_TITLE = "//*[@resource-id = 'org.wikipedia:id/search_results_list']//*[@resource-id='org.wikipedia:id/page_list_item_title']",
             PAGE_LIST_ITEM_TITLE_ID = "org.wikipedia:id/page_list_item_title",
@@ -25,6 +26,14 @@ public class SearchPageObject extends MainPageObject {
     private static String getResultSearchElement(String substring) {
         return SEARCH_RESULT_BY_SUBSTRING_TPL.replace("{SUBSTRING}", substring);
     }
+
+    private static String getElementByTitleAndDescription(String title, String description) {
+        return SEARCH_RESULT_BY_TITLE_DESCRIPTION
+                .replace("{TITLE}", title)
+                .replace("{DESCRIPTION}",description);
+    }
+    //*[@resource-id='org.wikipedia:id/page_list_item_title'][@text='JavaScript']/..//*[@text='High-level programming language']
+
     /* TEMPLATE METHODS */
 
     public void initSearchInput() {
@@ -98,5 +107,12 @@ public class SearchPageObject extends MainPageObject {
 
     public void checkWordInResults(String text) {
         this.checkWordInResults(By.id(PAGE_LIST_ITEM_TITLE_ID), "titles does not contain word: " + text, text);
+    }
+
+    public void waitForElementByTitleAndDescription(String title, String description){
+        String search_result = getElementByTitleAndDescription(title,description);
+        this.waitForElementPresent(By.xpath(search_result),
+                "Cannot find search result with title: " + title + " ,description: " + description,
+                15);
     }
 }
