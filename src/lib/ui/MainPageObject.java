@@ -143,7 +143,6 @@ public class MainPageObject {
     }
 
     public void assertElementPresent(By by, String attribute, String errorMessage){
-        WebElement element = waitForElementPresent(by, errorMessage, 0);
-        assertNotNull("No title is found",element.getAttribute(attribute));
+        assertTrue(errorMessage,driver.findElement(by).getAttribute(attribute).isEmpty());
     }
 }

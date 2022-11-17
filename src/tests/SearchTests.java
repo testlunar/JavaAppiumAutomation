@@ -4,7 +4,6 @@ import lib.CoreTestCase;
 import lib.ui.SearchPageObject;
 import org.junit.Assert;
 import org.junit.Test;
-import org.openqa.selenium.By;
 
 public class SearchTests extends CoreTestCase {
     @Test
@@ -48,24 +47,22 @@ public class SearchTests extends CoreTestCase {
     //Ex3: Тест: отмена поиска
     @Test
     public void testSearchCancel() {
-        mainPageObject.waitForElementAndClick(By.xpath("//*[contains(@text,'SKIP')]"), "no Skip button", 5);
-        mainPageObject.waitForElementAndClick(By.id("org.wikipedia:id/search_container"), "element by id not found", 5);
-        mainPageObject.waitForElementAndSendKeys(By.xpath("//*[contains(@text,'Search Wikipedia')]"), "Java", "can not find input", 15);
+        SearchPageObject searchPageObject = new SearchPageObject(driver);
+        searchPageObject.initSearchInput();
+        searchPageObject.typeSearchLine("Java");
 
-        mainPageObject.assertNumberOfElementsNotZero(By.id("org.wikipedia:id/page_list_item_title"), "not elements are found");
-        mainPageObject.waitForElementAndClear(By.id("org.wikipedia:id/search_container"), "can not find input", 15);
-        mainPageObject.waitForElementNotPresent(By.id("org.wikipedia:id/page_list_item_title"), "titles are present", 5);
+        searchPageObject.assertNumberOfArticlesNotZero();
+        searchPageObject.clearCancelSearch();
+        searchPageObject.assertThereIsNoResultOfSearch();
     }
 
     // Ex4*: Тест: проверка слов в поиске
     @Test
     public void testCheckWordInSearchResults() {
-        mainPageObject.waitForElementAndClick(By.xpath("//*[contains(@text,'SKIP')]"), "no Skip button", 5);
-        mainPageObject.waitForElementAndClick(By.id("org.wikipedia:id/search_container"), "element by id not found", 5);
-        mainPageObject.waitForElementAndSendKeys(By.xpath("//*[contains(@text,'Search Wikipedia')]"), "Java", "can not find input", 15);
-
-        mainPageObject.checkWordInResults(By.id("org.wikipedia:id/page_list_item_title"), "titles does not contain word: ", "java");
-
+        SearchPageObject searchPageObject = new SearchPageObject(driver);
+        searchPageObject.initSearchInput();
+        searchPageObject.typeSearchLine("Java");
+        searchPageObject.checkWordInResults("java");
     }
 
 

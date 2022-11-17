@@ -7,13 +7,14 @@ public class SearchPageObject extends MainPageObject {
     private static final String
             SKIP_BUTTON = "//*[contains(@text,'SKIP')]",
             SEARCH_CONTAINER = "org.wikipedia:id/search_container",
-            SEARCH_INPUT = "//*[@resource-id='org.wikipedia:id/search_container']/android.widget.TextView",
-//            SEARCH_INPUT = "//*[contains(@text,'Search Wikipedia')]",
             CANCEL_BUTTON = "org.wikipedia:id/search_close_btn",
             SEARCH_RESULT_BY_SUBSTRING_TPL = "//*[contains(@text,'{SUBSTRING}')]",
             SEARCH_RESULT_LOCATOR = "org.wikipedia:id/search_results_list",
             PAGE_LIST_ITEM_TITLE = "//*[@resource-id = 'org.wikipedia:id/search_results_list']//*[@resource-id='org.wikipedia:id/page_list_item_title']",
-            EMPTY_LABEL = "//*[contains(@text,'No results')]";
+            PAGE_LIST_ITEM_TITLE_ID = "org.wikipedia:id/page_list_item_title",
+            EMPTY_LABEL = "//*[contains(@text,'No results')]",
+            SEARCH_INPUT = "//*[contains(@text,'Search Wikipedia')]",
+            SEARCH_INPUT2 = "//*[@resource-id='org.wikipedia:id/search_container']/android.widget.TextView";
 
 
     public SearchPageObject(AppiumDriver driver) {
@@ -32,10 +33,12 @@ public class SearchPageObject extends MainPageObject {
         this.waitForElementAndClick(By.id(SEARCH_CONTAINER),
                 "Cannot find and click search container element", 5);
         this.waitForElementPresent(By.xpath(SEARCH_INPUT),
-                "Cannot find search input field", 5);
+                "Cannot find search input field", 10);
     }
 
     public void typeSearchLine(String search_line) {
+        this.waitForElementAndClick(By.xpath(SEARCH_INPUT),
+                "Cannot find and click search container element", 5);
         this.waitForElementAndSendKeys(By.xpath(SEARCH_INPUT), search_line,
                 "Cannot send text " + search_line + " in search init element", 5);
     }
@@ -81,11 +84,19 @@ public class SearchPageObject extends MainPageObject {
         this.waitForElementPresent(By.xpath(EMPTY_LABEL), "there is no empty label", 10);
     }
 
-    public void assertThereIsNoResultOfSearch(){
+    public void assertThereIsNoResultOfSearch() {
         this.assertElementIsNotPresent(By.xpath(PAGE_LIST_ITEM_TITLE), "we found some results by request");
     }
 
-    public void asserSearchInputHasText(String text){
-        this.assertElementHasText(By.xpath(SEARCH_INPUT),"text is not equal", text);
+    public void asserSearchInputHasText(String text) {
+        this.assertElementHasText(By.xpath(SEARCH_INPUT), "text is not equal", text);
+    }
+
+    public void assertNumberOfArticlesNotZero() {
+        this.assertNumberOfElementsNotZero(By.id(PAGE_LIST_ITEM_TITLE_ID), "not elements are found");
+    }
+
+    public void checkWordInResults(String text) {
+        this.checkWordInResults(By.id(PAGE_LIST_ITEM_TITLE_ID), "titles does not contain word: " + text, text);
     }
 }
