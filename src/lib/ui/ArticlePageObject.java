@@ -1,18 +1,19 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
+import lib.Platform;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-public class ArticlePageObject extends MainPageObject {
-    private static final String
-            TITLE = "xpath://*[@resource-id='pcs']/android.view.View[1]/android.widget.TextView[1]",
-            FOOTER_ELEMENT = "id:xpath://*[@text='View article in browser']",
-            SAVE_ARTICLE_BUTTON = "id:org.wikipedia:id/page_save",
-            SNACKBAR_BUTTON = "id:org.wikipedia:id/snackbar_action",
-            MY_LIST_NAME = "xpath://*[contains(@text,'Name of this list')]",
-            MY_LIST_OK_BUTTON = "xpath://*[contains(@text,'OK')]",
-            ARTICLE_TITLE = "xpath://*[@resource-id='pcs-edit-section-title-description']/../android.widget.TextView[1]";
+abstract public class ArticlePageObject extends MainPageObject {
+    protected static String
+            TITLE ,
+            FOOTER_ELEMENT ,
+            SAVE_ARTICLE_BUTTON,
+            SNACKBAR_BUTTON,
+            MY_LIST_NAME ,
+            MY_LIST_OK_BUTTON ,
+            ARTICLE_TITLE ;
 
 
     public ArticlePageObject(AppiumDriver driver) {
@@ -25,11 +26,19 @@ public class ArticlePageObject extends MainPageObject {
 
     public String getArticleTitle() {
         WebElement element = waitForTitleElement();
-        return element.getAttribute("text");
+        if(Platform.getInstance().isAndroid()) {
+            return element.getAttribute("text");
+        }else{
+            return element.getAttribute("name");
+        }
     }
 
     public void swipeToFooter() {
-        this.swipeUpToElement(FOOTER_ELEMENT, "Can not find the end of the article", 20);
+        if (Platform.getInstance().isAndroid()) {
+            this.swipeUpToElement(FOOTER_ELEMENT, "Can not find the end of the article", 40);
+        }else{
+            this.swipeUpTillElementAppear(FOOTER_ELEMENT,"Can not find the end of the article",40);
+        }
     }
 
 
@@ -55,6 +64,10 @@ public class ArticlePageObject extends MainPageObject {
 
     public void assertTitleIsPresent() {
         this.assertElementPresent(ARTICLE_TITLE,"text","No title is found");
+    }
+
+    public void addArticleToMySaved(){
+        this.waitForElementAndClick(SAVE_ARTICLE_BUTTON,"can not find option to add article to reading list",5);
     }
 
 }

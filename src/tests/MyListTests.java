@@ -1,29 +1,42 @@
 package tests;
 
 import lib.CoreTestCase;
+import lib.Platform;
 import lib.ui.ArticlePageObject;
 import lib.ui.MyListPageObject;
 import lib.ui.SearchPageObject;
+import lib.ui.factories.ArticlePageObjectFactory;
+import lib.ui.factories.MyListPageObjectFactory;
+import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
 
 public class MyListTests extends CoreTestCase {
+
+    private static final String name_folder = "My list";
+
     @Test
     public void testSaveFirstArticleToMyList() {
-        SearchPageObject searchPageObject = new SearchPageObject(driver);
+        SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
         searchPageObject.initSearchInput();
         searchPageObject.typeSearchLine("Java");
         searchPageObject.waitForSearchResult("Object-oriented programming language");
         searchPageObject.clickByArticleWithSomeString("Object-oriented programming language");
 
-        ArticlePageObject articlePageObject = new ArticlePageObject(driver);
+        ArticlePageObject articlePageObject = ArticlePageObjectFactory.get(driver);
         articlePageObject.waitForTitleElement();
         String article_title = articlePageObject.getArticleTitle();
-        articlePageObject.addArticleToNewList("My list");
+
+        if(Platform.getInstance().isAndroid()) {
+            articlePageObject.addArticleToNewList(name_folder);
+        }else{
+            articlePageObject.addArticleToMySaved();
+
+        }
         articlePageObject.openSavedListFromSnackBar();
 
-        MyListPageObject myListPageObject = new MyListPageObject(driver);
+        MyListPageObject myListPageObject = MyListPageObjectFactory.get(driver);
         myListPageObject.swipeToLeftArticleToDelete(article_title);
         myListPageObject.checkListItemDissapeared(article_title);
     }
@@ -31,13 +44,13 @@ public class MyListTests extends CoreTestCase {
     //Ex5: Тест: сохранение двух статей
     @Test
     public void testSaveTwoArticleToMyList() {
-        SearchPageObject searchPageObject = new SearchPageObject(driver);
+        SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
         searchPageObject.initSearchInput();
         searchPageObject.typeSearchLine("Java");
         searchPageObject.waitForSearchResult("Object-oriented programming language");
         searchPageObject.clickByArticleWithSomeString("Object-oriented programming language");
 
-        ArticlePageObject articlePageObject = new ArticlePageObject(driver);
+        ArticlePageObject articlePageObject = ArticlePageObjectFactory.get(driver);
         articlePageObject.waitForTitleElement();
         String listName = "Programming";
         articlePageObject.addArticleToNewList(listName);
@@ -50,7 +63,7 @@ public class MyListTests extends CoreTestCase {
 
         //Открытие сохраненного листа из всплывающего окна снизу
         articlePageObject.openSavedListFromSnackBar();
-        MyListPageObject myListPageObject = new MyListPageObject(driver);
+        MyListPageObject myListPageObject = MyListPageObjectFactory.get(driver);
         myListPageObject.checkMyListAppeared();
 
         //удаление статьи

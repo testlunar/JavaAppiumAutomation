@@ -1,13 +1,13 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
-import org.openqa.selenium.By;
+import lib.Platform;
 
-public class MyListPageObject extends MainPageObject {
-    private static final String
-            ARTICLE_XPATH_BY_TEXT = "xpath://*[contains(@text,'{SUBSTRING}')]",
-            LIST_TITLE = "id:org.wikipedia:id/item_title",
-            ARTICLE_TITLE = "id:org.wikipedia:id/page_list_item_title";
+abstract public class MyListPageObject extends MainPageObject {
+    protected static  String
+            ARTICLE_XPATH_BY_TEXT ,
+            LIST_TITLE ,
+            ARTICLE_TITLE;
 
     public MyListPageObject(AppiumDriver driver) {
         super(driver);
@@ -23,6 +23,12 @@ public class MyListPageObject extends MainPageObject {
         checkMyListAppeared();
         this.swipeElementToLeft(articleNameXpath,
                 "can not swipe left", 5);
+
+        if(Platform.getInstance().isiOS()){
+            this.clickElementToTheRightUpperCorner(articleNameXpath,
+                    "can not swipe left");
+
+        }
     }
 
     public void checkMyListAppeared() {

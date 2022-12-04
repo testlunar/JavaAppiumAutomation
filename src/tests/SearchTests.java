@@ -2,13 +2,14 @@ package tests;
 
 import lib.CoreTestCase;
 import lib.ui.SearchPageObject;
+import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class SearchTests extends CoreTestCase {
     @Test
     public void testSearch(){
-        SearchPageObject searchPageObject = new SearchPageObject(driver);
+        SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
         searchPageObject.initSearchInput();
         searchPageObject.typeSearchLine("Java");
         searchPageObject.waitForSearchResult("Object-oriented programming language");
@@ -16,7 +17,7 @@ public class SearchTests extends CoreTestCase {
 
     @Test
     public void testCancelSearch() {
-        SearchPageObject searchPageObject = new SearchPageObject(driver);
+        SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
         searchPageObject.initSearchInput();
         searchPageObject.typeSearchLine("Java");
         searchPageObject.waitForSearchResult("Object-oriented programming language");
@@ -28,7 +29,7 @@ public class SearchTests extends CoreTestCase {
 
     @Test
     public void testCancelAndClearSearch() {
-        SearchPageObject searchPageObject = new SearchPageObject(driver);
+        SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
         searchPageObject.initSearchInput();
         searchPageObject.typeSearchLine("Java");
         searchPageObject.waitForSearchResult("Object-oriented programming language");
@@ -39,7 +40,7 @@ public class SearchTests extends CoreTestCase {
 
     @Test
     public void testCheckTextInSeachElement() {
-        SearchPageObject searchPageObject = new SearchPageObject(driver);
+        SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
         searchPageObject.initSearchInput();
         searchPageObject.asserSearchInputHasText("Search Wikipedia");
     }
@@ -47,7 +48,7 @@ public class SearchTests extends CoreTestCase {
     //Ex3: Тест: отмена поиска
     @Test
     public void testSearchCancel() {
-        SearchPageObject searchPageObject = new SearchPageObject(driver);
+        SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
         searchPageObject.initSearchInput();
         searchPageObject.typeSearchLine("Java");
 
@@ -59,7 +60,7 @@ public class SearchTests extends CoreTestCase {
     // Ex4*: Тест: проверка слов в поиске
     @Test
     public void testCheckWordInSearchResults() {
-        SearchPageObject searchPageObject = new SearchPageObject(driver);
+        SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
         searchPageObject.initSearchInput();
         searchPageObject.typeSearchLine("Java");
         searchPageObject.checkWordInResults("java");
@@ -69,7 +70,7 @@ public class SearchTests extends CoreTestCase {
     @Test
     public void testAmountOfNotEmptySearch() {
         String searchLine = "Java";
-        SearchPageObject searchPageObject = new SearchPageObject(driver);
+        SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
         searchPageObject.initSearchInput();
         searchPageObject.typeSearchLine(searchLine);
 
@@ -80,7 +81,7 @@ public class SearchTests extends CoreTestCase {
     @Test
     public void testAmountOfEmptySearch(){
         String searchLine = "shdjsafha";
-        SearchPageObject searchPageObject = new SearchPageObject(driver);
+        SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
         searchPageObject.initSearchInput();
         searchPageObject.typeSearchLine(searchLine);
         searchPageObject.waitForEmptyResultLabel();
@@ -89,7 +90,7 @@ public class SearchTests extends CoreTestCase {
 
     @Test
     public void testSearchByTitleAndDescription(){
-        SearchPageObject searchPageObject = new SearchPageObject(driver);
+        SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
         searchPageObject.initSearchInput();
         searchPageObject.typeSearchLine("Java");
         searchPageObject.waitForElementByTitleAndDescription("Java","Island in Indonesia, Southeast Asia");
